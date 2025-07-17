@@ -42,12 +42,6 @@ variable "MIST_BACKEND_PG_DEV_USERNAME" {
   description = "Username for the mist backend PostgreSQL development VM."
 }
 
-variable "MIST_BACKEND_PG_DEV_PASSWORD" {
-  type        = string
-  sensitive   = true
-  description = "Password for the mist backend PostgreSQL development VM."
-}
-
 variable "MIST_BACKEND_PG_DEV_SSH_PUBKEY" {
   type        = string
   sensitive   = true

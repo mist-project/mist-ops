@@ -17,8 +17,7 @@ class OnePasswordProvisioner:
         self.user = user
         self.service = service
         self.password_length = password_length
-        self.user_item_title = f"{service}-user"
-        self.ssh_item_title = f"{service}-ssh"
+        self.user_item_title = f"{service}"
         self.key_name = f"{service}_{user}_key"
 
     def signin(self):
@@ -26,7 +25,7 @@ class OnePasswordProvisioner:
         subprocess.run(["op", "signin"], check=True)
 
     def generate_password(self) -> str:
-        alphabet = string.ascii_letters + string.digits + "!@#$%^&*()_-+="
+        alphabet = string.ascii_letters + string.digits + "!-.*+="
         return "".join(secrets.choice(alphabet) for _ in range(self.password_length))
 
     def generate_ssh_keypair(self, key_path: Path):
@@ -72,17 +71,17 @@ class OnePasswordProvisioner:
 
         self.create_op_item(
             self.user_item_title,
-            {"username": self.user, "password": password},
+            {
+                "username": self.user,
+                "password": password,
+                "public key": public_key,
+                "private key": private_key,
+            },
             category="login",
         )
 
-        self.create_op_item(
-            self.ssh_item_title,
-            {"public key": public_key, "private key": private_key},
-        )
-
         print("\n🎉 Done! Your secrets are stored in 1Password.")
-        print(f"🗂 Vault Item Titles: {self.user_item_title}, {self.ssh_item_title}")
+        print(f"🗂 Vault Item Title: {self.user_item_title}")
 
 
 if __name__ == "__main__":

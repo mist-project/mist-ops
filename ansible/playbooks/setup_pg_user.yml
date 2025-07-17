@@ -1,0 +1,97 @@
+- name: Configure PostgreSQL app user
+  hosts: backend_pg_dev
+  become: true
+
+  pre_tasks:
+    - name: Create .ansible directory for postgres if missing
+      file:
+        path: /var/lib/postgresql/.ansible
+        state: directory
+        owner: postgres
+        group: postgres
+        mode: "0700"
+
+    - name: Create remote_tmp directory inside .ansible
+      file:
+        path: /var/lib/postgresql/.ansible/tmp
+        state: directory
+        owner: postgres
+        group: postgres
+        mode: "0700"
+
+  tasks:
+    - name: Create PostgreSQL user
+      become: yes
+      become_user: postgres
+      community.postgresql.postgresql_user:
+        name: "{{ db_user }}"
+        password: "{{ db_password }}"
+        role_attr_flags: CREATEDB
+
+    - name: Ensure PostgreSQL database exists
+      community.postgresql.postgresql_db:
+        name: "{{ db_name }}"
+        encoding: "UTF8"
+        state: present
+        login_user: "{{ db_user }}"
+        login_password: "{{ db_password }}"
+        login_host: "{{ db_host_address }}"
+
+    - name: Grant usage and create on public schema
+      community.postgresql.postgresql_privs:
+        type: schema
+        objs: public
+        database: "{{ db_name }}"
+        roles: "{{ db_user }}"
+        privs: "USAGE,CREATE"
+        login_user: "{{ db_user }}"
+        login_password: "{{ db_password }}"
+        login_host: "{{ db_host_address }}"
+
+    - name: Change owner of public schema
+      become: true
+      become_user: postgres
+      community.postgresql.postgresql_schema:
+        name: public
+        owner: "{{ db_user }}"
+
+    - name: Grant full table privileges on all current tables
+      community.postgresql.postgresql_privs:
+        type: table
+        objs: ALL_IN_SCHEMA
+        database: "{{ db_name }}"
+        schema: public
+        roles: "{{ db_user }}"
+        privs: "SELECT,INSERT,UPDATE,DELETE"
+        grant_option: no
+        login_user: "{{ db_user }}"
+        login_password: "{{ db_password }}"
+        login_host: "{{ db_host_address }}"
+
+    - name: Grant sequence privileges
+      community.postgresql.postgresql_privs:
+        type: sequence
+        database: "{{ db_name }}"
+        schema: public
+        roles: "{{ db_user }}"
+        privs: "USAGE,SELECT,UPDATE"
+        objs: ALL_IN_SCHEMA
+        login_user: "{{ db_user }}"
+        login_password: "{{ db_password }}"
+        login_host: "{{ db_host_address }}"
+
+    - name: Grant default privileges on future tables to the user
+      community.postgresql.postgresql_query:
+        db: "{{ db_name }}"
+        query: 'ALTER DEFAULT PRIVILEGES FOR ROLE "{{ db_user }}" IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO "{{ db_user }}";'
+        login_user: "{{ db_user }}"
+        login_password: "{{ db_password }}"
+        login_host: "{{ db_host_address }}"
+
+    - name: Grant default privileges on future sequences to the user
+      community.postgresql.postgresql_query:
+        db: "{{ db_name }}"
+        query: 'ALTER DEFAULT PRIVILEGES FOR ROLE "{{ db_user }}" IN SCHEMA public GRANT USAGE, SELECT, UPDATE ON SEQUENCES TO "{{ db_user }}";'
+        login_user: "{{ db_user }}"
+        login_password: "{{ db_password }}"
+        login_host: "{{ db_host_address }}"
