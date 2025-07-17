@@ -1,0 +1,77 @@
+- name: Install PostgreSQL 16 on Ubuntu
+  hosts: backend_pg_dev
+  become: true
+  vars:
+    pg_version: "16"
+    pg_conf_dir: /etc/postgresql/16/main
+    pg_listen_ip: "*" # or a specific IP like "192.168.0.20"
+    allowed_subnet: "192.168.0.0/24" # adjust to your local network
+
+  tasks:
+    - name: Install prerequisites
+      apt:
+        name:
+          - wget
+          - gnupg
+          - lsb-release
+        state: present
+        update_cache: yes
+
+    - name: Add PostgreSQL APT key
+      apt_key:
+        url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+        state: present
+
+    - name: Add PostgreSQL APT repository
+      apt_repository:
+        repo: "deb http://apt.postgresql.org/pub/repos/apt {{ ansible_distribution_release }}-pgdg main"
+        state: present
+        filename: "pgdg"
+
+    - name: Update APT cache after adding PostgreSQL repo
+      apt:
+        update_cache: yes
+
+    - name: Install PostgreSQL {{ pg_version }}
+      apt:
+        name:
+          - "postgresql-{{ pg_version }}"
+          - "postgresql-contrib-{{ pg_version }}"
+          - libpq-dev # optional for psycopg2 or client builds
+        state: present
+
+    - name: Ensure PostgreSQL is enabled and started
+      systemd:
+        name: postgresql
+        enabled: true
+        state: started
+
+    - name: Set listen_addresses in postgresql.conf
+      lineinfile:
+        path: "{{ pg_conf_dir }}/postgresql.conf"
+        regexp: '^#?listen_addresses\s*='
+        line: "listen_addresses = '{{ pg_listen_ip }}'"
+        state: present
+
+    - name: Ensure pg_hba.conf allows host access with md5
+      blockinfile:
+        path: "{{ pg_conf_dir }}/pg_hba.conf"
+        block: |
+          # Ansible-managed rule to allow subnet
+          host    all             all             {{ allowed_subnet }}          md5
+        marker: "# {mark} ANSIBLE MANAGED BLOCK: allow remote subnet {{ allowed_subnet }}"
+
+    - name: Ensure PostgreSQL is reloaded
+      systemd:
+        name: postgresql
+        state: restarted
+
+    - name: Ensure psycopg2 is installed
+      apt:
+        name: python3-psycopg2
+        state: present
+
+    - name: Restart PostgreSQL fully
+      systemd:
+        name: postgresql
+        state: restarted
