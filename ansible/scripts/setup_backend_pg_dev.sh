@@ -12,7 +12,11 @@ PRIVATE_IP_ADDRESS=$(op read op://mistiop/mist-backend-pg-dev/ip_address)
 DB_NAME=$(op read op://mistiop/mist-backend-pg-dev/db_name)
 
 # Check if secret fetching was successful
-if [ -z "$ANSIBLE_REMOTE_USER" ] ||[ -z "$PRIVATE_KEY_CONTENT" ] || [ -z "$PG_USER_PASSWORD" ] || [ -z "$PRIVATE_IP_ADDRESS" ] || [ -z "$DB_NAME" ]; then
+if [ -z "$ANSIBLE_REMOTE_USER" ] || \
+   [ -z "$PRIVATE_KEY_CONTENT" ] || \
+   [ -z "$PG_USER_PASSWORD" ] || \
+   [ -z "$PRIVATE_IP_ADDRESS" ] || \
+   [ -z "$DB_NAME" ]; then
     echo "Error: One or more secrets could not be fetched from 1Password."
     exit 1
 fi
@@ -29,12 +33,12 @@ export ANSIBLE_PRIVATE_KEY_FILE="$KEY_FILE"
 # ansible-playbook -i inventory/hosts.ini playbooks/initialize_ubuntu_server.yml \
 #   --extra-vars "ansible_ssh_private_key_file=$KEY_FILE ansible_user=$ANSIBLE_REMOTE_USER"
 
-# ansible-playbook -i inventory/hosts.ini playbooks/install_pg_version_16.yml \
+# ansible-playbook -i inventory/hosts.ini pg_playbooks/install_pg_version_16.yml \
 #   --extra-vars "ansible_ssh_private_key_file=$KEY_FILE ansible_user=$ANSIBLE_REMOTE_USER"
 
 ansible-playbook \
   -i inventory/hosts.ini \
-  playbooks/setup_pg_user.yml \
+  pg_playbooks/setup_pg_user.yml \
   --extra-vars "ansible_ssh_private_key_file=$KEY_FILE" \
   --extra-vars "ansible_user=$ANSIBLE_REMOTE_USER" \
   --extra-vars "db_name=$DB_NAME" \
@@ -46,5 +50,8 @@ ansible-playbook \
 rm -f "$KEY_FILE"
 unset ANSIBLE_REMOTE_USER
 unset ANSIBLE_PRIVATE_KEY_FILE
+unset PG_USER_PASSWORD
+unset PRIVATE_IP_ADDRESS
+unset DB_NAME
 
 echo "Ansible run completed and sensitive data cleaned up."

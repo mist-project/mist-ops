@@ -1,5 +1,5 @@
 - name: Configure PostgreSQL app user
-  hosts: backend_pg_dev
+  # hosts: backend-pg-dev # add host
   become: true
 
   pre_tasks:

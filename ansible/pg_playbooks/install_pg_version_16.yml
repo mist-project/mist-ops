@@ -1,5 +1,5 @@
 - name: Install PostgreSQL 16 on Ubuntu
-  hosts: backend_pg_dev
+  hosts: backend-pg-dev
   become: true
   vars:
     pg_version: "16"
@@ -60,11 +60,6 @@
           # Ansible-managed rule to allow subnet
           host    all             all             {{ allowed_subnet }}          md5
         marker: "# {mark} ANSIBLE MANAGED BLOCK: allow remote subnet {{ allowed_subnet }}"
-
-    - name: Ensure PostgreSQL is reloaded
-      systemd:
-        name: postgresql
-        state: restarted
 
     - name: Ensure psycopg2 is installed
       apt:

@@ -1,0 +1,26 @@
+- hosts: backend-pg-dev
+  become: true
+  tasks:
+    - name: Upgrade all system packages
+      apt:
+        upgrade: dist
+        update_cache: yes
+
+    - name: Install qemu-guest-agent
+      apt:
+        name: qemu-guest-agent
+        state: present
+        update_cache: yes
+
+    - name: Enable and start qemu-guest-agent
+      systemd:
+        name: qemu-guest-agent
+        enabled: yes
+        state: started
+
+    # This is necessary so that user/become_user become priviledged
+    - name: Install acl package
+      apt:
+        name: acl
+        state: present
+        update_cache: yes

@@ -1,5 +1,4 @@
-# TODO: change host to all eventually
-- hosts: backend_pg_dev
+- hosts: control-center
   become: true
   tasks:
     - name: Upgrade all system packages
