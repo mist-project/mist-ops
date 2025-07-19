@@ -10,12 +10,13 @@ version: 0.1
 log:
   fields:
     service: registry
+
 http:
-  addr: :9444
+  addr: :5000
   headers:
-    Access-Control-Allow-Origin: ['*']
-    Access-Control-Allow-Methods: ['GET', 'HEAD', 'OPTIONS', 'DELETE']
-    Access-Control-Allow-Headers: ['Authorization', 'Accept', 'Cache-Control']
+    Access-Control-Allow-Origin: ["http://192.168.0.22:9444"]
+    Access-Control-Allow-Methods: ["GET", "HEAD", "OPTIONS", "DELETE"]
+    Access-Control-Allow-Headers: ["Authorization", "Accept", "Cache-Control"]
 storage:
   filesystem:
     rootdirectory: /var/lib/registry
