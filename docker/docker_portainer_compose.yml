@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  portainer:
+    image: portainer/portainer-ce:2.31.3
+    container_name: portainer
+    restart: always
+    ports:
+      - "9443:9443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /opt/portainer/data:/data                   
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
