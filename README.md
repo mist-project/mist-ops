@@ -26,6 +26,12 @@ https://1password.com/downloads/linux
 Installed ansible with pipx. Installed version `10.7.0` 
 https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html
 
+#### Install Ansible dependencies
+```
+cd ansible 
+ansible-galaxy install -r requirements.yml
+```
+
 ## Miscellaneous
 
 

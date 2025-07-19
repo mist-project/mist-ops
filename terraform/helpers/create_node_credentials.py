@@ -17,7 +17,6 @@ class OnePasswordProvisioner:
         self.user = user
         self.service = service
         self.password_length = password_length
-        self.user_item_title = f"{service}"
         self.key_name = f"{service}_{user}_key"
 
     def signin(self):
@@ -70,7 +69,7 @@ class OnePasswordProvisioner:
         print("📦 Storing credentials in 1Password...")
 
         self.create_op_item(
-            self.user_item_title,
+            self.service,
             {
                 "username": self.user,
                 "password": password,
@@ -81,7 +80,7 @@ class OnePasswordProvisioner:
         )
 
         print("\n🎉 Done! Your secrets are stored in 1Password.")
-        print(f"🗂 Vault Item Title: {self.user_item_title}")
+        print(f"🗂 Vault Item Title: {self.service}")
 
 
 if __name__ == "__main__":

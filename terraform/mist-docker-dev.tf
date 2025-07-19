@@ -1,16 +1,15 @@
-resource "proxmox_vm_qemu" "mist-backend-pg-dev" {
-  name        = "vm-mist-backend-pg-dev"
-  desc        = "Backend PostgreSQL Development VM"
-  vmid        = "300"
+resource "proxmox_vm_qemu" "mist-docker-dev" {
+  name        = "vm-mist-docker-dev"
+  desc        = "Docker Development VM"
+  vmid        = "301"
   target_node = "pve-mistiop"
 
   agent            = 1
   clone            = "ubuntu-2204-template"
   full_clone       = true
-  automatic_reboot = false
+  automatic_reboot = true
 
   # Hardware and network Settings
-  boot    = ""
   qemu_os = "other"
   bios    = "seabios"
 
@@ -23,7 +22,7 @@ resource "proxmox_vm_qemu" "mist-backend-pg-dev" {
   balloon = 2048
 
   # Network Settings
-  ipconfig0 = "ip=192.168.0.20/24,gw=192.168.0.1"
+  ipconfig0 = "ip=192.168.0.21/24,gw=192.168.0.1"
   network {
     id     = 0
     bridge = "vmbr0"
@@ -62,7 +61,7 @@ resource "proxmox_vm_qemu" "mist-backend-pg-dev" {
 
 
   os_type = "cloud-init"
-  ciuser  = var.MIST_BACKEND_PG_DEV_USERNAME
-  sshkeys = var.MIST_BACKEND_PG_DEV_SSH_PUBKEY
+  ciuser  = var.MIST_DOCKER_DEV_USERNAME
+  sshkeys = var.MIST_DOCKER_DEV_SSH_PUBKEY
 }
 
