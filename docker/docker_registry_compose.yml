@@ -30,7 +30,7 @@ services:
       - "9444:80"
     environment:
       - REGISTRY_TITLE=Mistiop Image Registry
-      - REGISTRY_URL=http://control-center.mistiop:9445
+      - REGISTRY_URL=http://docker-registry:5000
       - DELETE_IMAGES=true
     depends_on:
       - docker-registry
