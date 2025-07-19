@@ -29,14 +29,15 @@ echo "✅ Key written to $KEY_FILE"
 HOST="${1:-192.168.0.21}"
 echo "🔗 Connecting to $REMOTE_USER@$HOST..."
 
-# Open SSH session and then clean up
+# Start background cleanup task
 (
-  ssh -i "$KEY_FILE" "$REMOTE_USER@$HOST" -o "StrictHostKeyChecking=no"
-)
+  sleep 3
+  echo "🧹 Cleaning up..."
+  rm -f "$KEY_FILE"
+  unset PRIVATE_KEY_CONTENT
+) &
 
-# Cleanup only after session exits
-echo "🧹 Cleaning up..."
-rm -f "$KEY_FILE"
-unset REMOTE_USER
+# Start SSH session (blocking)
+ssh -i "$KEY_FILE" "$REMOTE_USER@$HOST" -o "StrictHostKeyChecking=no"
 
 echo "✅ SSH session ended. Cleanup complete."

@@ -18,25 +18,23 @@ if [[ -z "$REMOTE_USER" || -z "$PRIVATE_KEY_CONTENT" ]]; then
   exit 1
 fi
 
-# Write key to a secure temp file
 KEY_FILE=$(mktemp)
 echo "$PRIVATE_KEY_CONTENT" > "$KEY_FILE"
 chmod 600 "$KEY_FILE"
 
-echo "✅ Key written to $KEY_FILE"
-
-# Default host or override via arg
 HOST="${1:-192.168.0.22}"
+
 echo "🔗 Connecting to $REMOTE_USER@$HOST..."
 
-# Open SSH session and then clean up
-(
-  ssh -i "$KEY_FILE" "$REMOTE_USER@$HOST" -o "StrictHostKeyChecking=no"
-)
+# Spawn background terminal tab to delete key file after delay
+gnome-terminal -- bash -c "
+  echo '🧹 Deleting SSH key...'
+  sleep 3
+  rm -f '$KEY_FILE'
+  exit
+" &
 
-# Cleanup only after session exits
-echo "🧹 Cleaning up..."
-rm -f "$KEY_FILE"
-unset REMOTE_USER
+# Start SSH session (blocking)
+ssh -i "$KEY_FILE" "$REMOTE_USER@$HOST" -o "StrictHostKeyChecking=no"
 
-echo "✅ SSH session ended. Cleanup complete."
+echo "✅ SSH session ended."
