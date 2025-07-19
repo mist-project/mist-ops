@@ -1,0 +1,40 @@
+services:
+  docker-registry:
+    image: registry:2
+    container_name: docker_registry
+    restart: always
+    ports:
+      - "9445:5000"
+    environment:
+      REGISTRY_HTTP_HEADERS_Access-Control-Allow-Origin: '["http://control-center.mistiop:9444"]'
+      REGISTRY_HTTP_HEADERS_Access-Control-Allow-Methods: '["HEAD", "GET", "OPTIONS", "DELETE"]'
+      REGISTRY_HTTP_HEADERS_Access-Control-Allow-Credentials: '["true"]'
+      REGISTRY_HTTP_HEADERS_Access-Control-Allow-Headers: '["Authorization", "Accept", "Cache-Control"]'
+      REGISTRY_HTTP_HEADERS_Access-Control-Expose-Headers: '["Docker-Content-Digest"]'
+    volumes:
+      - /opt/docker-registry/data:/var/lib/registry
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  docker-registry-ui:
+    image: joxit/docker-registry-ui:2.5.7
+    container_name: docker_registry_ui
+    restart: always
+    ports:
+      - "9444:80"
+    environment:
+      - REGISTRY_TITLE=Mistiop Image Registry
+      - REGISTRY_URL=http://control-center.mistiop:9445
+      - DELETE_IMAGES=true
+    depends_on:
+      - docker-registry
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
