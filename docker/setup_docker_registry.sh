@@ -11,7 +11,7 @@ log:
   fields:
     service: registry
 http:
-  addr: :5000
+  addr: :9444
   headers:
     Access-Control-Allow-Origin: ['*']
     Access-Control-Allow-Methods: ['GET', 'HEAD', 'OPTIONS', 'DELETE']
