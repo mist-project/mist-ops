@@ -5,11 +5,11 @@ echo "You will be prompted to sign in to 1Password ---->"
 eval $(op signin)
 
 # Fetch secrets
-ANSIBLE_REMOTE_USER=$(op read op://mistiop/mist-backend-pg-dev/username)
-PG_USER_PASSWORD=$(op read op://mistiop/mist-backend-pg-dev/password)
-PRIVATE_KEY_CONTENT=$(op read op://mistiop/mist-backend-pg-dev/private\ key)
-PRIVATE_IP_ADDRESS=$(op read op://mistiop/mist-backend-pg-dev/ip_address)
-DB_NAME=$(op read op://mistiop/mist-backend-pg-dev/db_name)
+ANSIBLE_REMOTE_USER=$(op read "$OP_BACKEND_DEV_USERNAME_PATH")
+PG_USER_PASSWORD=$(op read "$OP_BACKEND_DEV_PASSWORD_PATH")
+PRIVATE_KEY_CONTENT=$(op read "$OP_BACKEND_DEV_PRIVATE_KEY_PATH")
+PRIVATE_IP_ADDRESS=$(op read "$OP_BACKEND_DEV_IP_ADDRESS_PATH")
+DB_NAME=$(op read "$OP_BACKEND_DEV_DB_NAME_PATH")
 
 # Check if secret fetching was successful
 if [ -z "$ANSIBLE_REMOTE_USER" ] || \

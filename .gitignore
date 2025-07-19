@@ -6,3 +6,5 @@ terraform.tfstate.backup
 *.tfvars
 
 .venv
+
+.env*

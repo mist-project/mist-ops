@@ -44,3 +44,20 @@ When fetching private keys ssh from 1password and storing it a file. You will ne
 
 
 if you having issues with the command `ssh -i /key/path user@host`
+
+## ENVs
+
+# BACKEND DEV ENVIRONMENT VARIABLES
+export OP_BACKEND_DEV_USERNAME_PATH=""
+export OP_BACKEND_DEV_PASSWORD_PATH=""
+export OP_BACKEND_DEV_PRIVATE_KEY_PATH=""
+export OP_BACKEND_DEV_IP_ADDRESS_PATH=""
+export OP_BACKEND_DEV_DB_NAME_PATH=""
+
+# DOCKER DEV ENVIRONMENT VARIABLES
+export OP_DOCKER_DEV_USERNAME_PATH=""
+export OP_DOCKER_DEV_PRIVATE_KEY_PATH=""
+
+# CONTROL CENTER ENVIRONMENT VARIABLES
+export OP_CONTROL_CENTER_USERNAME_PATH=""
+export OP_CONTROL_CENTER_PRIVATE_KEY_PATH=""

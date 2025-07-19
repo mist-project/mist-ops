@@ -10,8 +10,8 @@ eval "$(op signin)" || {
 
 # Fetch credentials
 echo "📦 Fetching secrets..."
-REMOTE_USER=$(op read op://mistiop/mist-docker-dev/username)
-PRIVATE_KEY_CONTENT=$(op read "op://mistiop/mist-docker-dev/private key")
+REMOTE_USER=$(op read "$OP_DOCKER_DEV_USERNAME_PATH")
+PRIVATE_KEY_CONTENT=$(op read "$OP_DOCKER_DEV_PRIVATE_KEY_PATH")
 
 if [[ -z "$REMOTE_USER" || -z "$PRIVATE_KEY_CONTENT" ]]; then
   echo "❌ Missing required credentials from 1Password."

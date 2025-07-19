@@ -5,8 +5,8 @@ echo "You will be prompted to sign in to 1Password ---->"
 eval $(op signin)
 
 # Fetch secrets
-ANSIBLE_REMOTE_USER=$(op read op://mistiop/control-center/username)
-PRIVATE_KEY_CONTENT=$(op read op://mistiop/control-center/private\ key)
+ANSIBLE_REMOTE_USER=$(op read "$OP_DOCKER_DEV_USERNAME_PATH")
+PRIVATE_KEY_CONTENT=$(op read "$OP_DOCKER_DEV_PRIVATE_KEY_PATH")
 
 # Check if secret fetching was successful
 if [ -z "$ANSIBLE_REMOTE_USER" ] || \
