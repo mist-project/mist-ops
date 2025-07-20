@@ -1,8 +1,12 @@
 #!/bin/bash
 
 # Authenticate with 1Password CLI (if not already authenticated)
-echo "You will be prompted to sign in to 1Password ---->"
-eval $(op signin)
+
+echo "🔐 Signing in to 1Password..."
+eval "$(op signin)" || {
+  echo "❌ Failed to authenticate with 1Password CLI."
+  exit 1
+}
 
 # Fetch secrets
 ANSIBLE_REMOTE_USER=$(op read "$OP_DOCKER_DEV_USERNAME_PATH")
